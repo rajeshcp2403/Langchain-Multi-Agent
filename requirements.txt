@@ -11,3 +11,4 @@ lxml
 langchain-google-genai
 langchain-classic
 python-dotenv
+rich
