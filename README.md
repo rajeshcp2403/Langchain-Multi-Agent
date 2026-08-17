@@ -1,129 +1,138 @@
 # Research Intelligence Suite
 
-A multi-agent research assistant built with LangChain, Tavily, and Python to search, scrape, synthesize, and refine research into a polished report.
+A multi-agent research assistant that uses LangChain, Tavily, Google Gemini, and Python to search the web, scrape useful content, synthesize findings, and review the final report.
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10+" />
-  <img src="https://img.shields.io/badge/LangChain-MultiAgent-000000?style=for-the-badge" alt="LangChain Multi-Agent" />
+  <img src="https://img.shields.io/badge/LangChain-Multi--Agent-000000?style=for-the-badge" alt="LangChain Multi-Agent" />
   <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
 </p>
 
+## What This Project Does
+
+Research Intelligence Suite is a multi-agent AI research tool. It accepts a topic, searches the web for relevant information, extracts useful content from a selected webpage, writes a structured research report, and reviews the report for quality.
+
+The project is designed to show how separate AI agents can work together in one workflow instead of making a single model do everything.
+
 ## Overview
 
-This project demonstrates a practical multi-agent AI workflow for research tasks. Instead of relying on a single model to do everything, the system splits responsibilities across specialized agents:
+Research Intelligence Suite demonstrates a practical agent-based workflow for web research. Instead of asking one model to handle the whole task, the pipeline separates the work into focused steps:
 
-- Search Agent: finds recent and relevant sources
-- Reader Agent: selects and scrapes a target page
-- Writer Agent: drafts a structured research report
-- Critic Agent: reviews the output for quality and clarity
+- Search Agent finds recent and relevant web sources with Tavily.
+- Reader Agent selects a useful source and extracts readable page content.
+- Writer Agent drafts a structured research report from the gathered material.
+- Critic Agent evaluates the report and gives specific feedback.
 
-The workflow is designed to mirror how a human research team operates: gather evidence, read deeper, write a report, and refine it.
+The result is a compact research workflow that mirrors a small research team: discover sources, inspect evidence, write clearly, and critique the output.
 
-## Why This Project
+## Features
 
-This project showcases:
-- Agent-based orchestration with LangChain
-- Tool calling and pipeline design
-- Web search and content extraction
-- AI-assisted report generation
-- Clean presentation through a Streamlit interface
-- Real-world patterns for building research automation systems
+- Multi-agent orchestration with LangChain
+- Web search through Tavily
+- URL scraping with `requests`, `trafilatura`, `readability-lxml`, and BeautifulSoup
+- Report generation with Google Gemini through `langchain-google-genai`
+- Critique and scoring step for quality review
+- Streamlit interface for running the full workflow from a browser
+- CLI entry point for quickly testing the pipeline
+
+## Skills Used
+
+- Python programming
+- LangChain agent creation
+- Multi-agent workflow design
+- Prompt engineering
+- Google Gemini LLM integration
+- Tavily API integration
+- Web scraping and readable content extraction
+- Streamlit web app development
+- Environment variable management with `.env`
+- Modular project structure
+- Research report generation
+- AI-based report review and evaluation
 
 ## Architecture
 
 ```text
-User Query
-   |
-   v
+User Topic
+    |
+    v
 Search Agent
-   | --> Tavily Search API
-   v
+    |-- Tavily Search API
+    v
 Reader Agent
-   | --> URL selection + scraping
-   v
+    |-- URL selection and scraping
+    v
 Writer Agent
-   | --> Research synthesis
-   v
+    |-- Report synthesis
+    v
 Critic Agent
-   | --> Review + refinement
-   v
-Final Research Report
+    |-- Review and feedback
+    v
+Final Research State
 ```
-
-## Core Features
-
-- Multi-agent research workflow
-- Web-based source discovery using Tavily
-- URL-level scraping and content extraction
-- Clean text filtering and readability extraction
-- Draft generation using LLM reasoning
-- Critique and refinement cycle
-- Professional Streamlit UI for report presentation
 
 ## Tech Stack
 
 - Python
 - LangChain
+- Google Gemini
 - Tavily API
+- Streamlit
 - BeautifulSoup
 - readability-lxml
 - trafilatura
-- Streamlit
-- dotenv
+- python-dotenv
+- rich
 
 ## Project Structure
 
 ```text
-langchain-multi-agent/
-├── app.py
-├── main.py
-├── .env
-├── requirements.txt
-├── README.md
-├── src/
-│   ├── Agents/
-│   │   └── agents.py
-│   ├── pipelines/
-│   │   └── pipeline.py
-│   ├── tools/
-│   │   └── tools.py
-│   └── utils/
-│       └── ...
-└── venv/
+Langchain-Multi-Agent/
+|-- app.py
+|-- main.py
+|-- requirements.txt
+|-- README.md
+|-- LICENSE
+|-- src/
+|   |-- Agents/
+|   |   |-- agents.py
+|   |   `-- __init__.py
+|   |-- pipelines/
+|   |   |-- pipeline.py
+|   |   `-- __init__.py
+|   `-- tools/
+|       |-- tools.py
+|       `-- __init__.py
+`-- venv/
 ```
 
-## Setup
+## Installation Process
 
-1. Clone the project
-2. Create and activate a virtual environment
+1. Clone the project and open the project directory.
 
-On Windows:
+2. Create and activate a virtual environment.
 
 ```powershell
 python -m venv venv
 venv\Scripts\activate
 ```
 
-3. Install dependencies
+3. Install dependencies.
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file in the project root
+4. Create a `.env` file in the project root.
 
 ```env
 TAVILY_API_KEY=your_tavily_api_key
-OPENAI_API_KEY=your_openai_api_key
+GOOGLE_API_KEY=your_google_api_key
 ```
 
-## Run the Project
+The project uses `ChatGoogleGenerativeAI`, so the Gemini key should be available as `GOOGLE_API_KEY`.
 
-Run the pipeline directly:
-
-```powershell
-python main.py
-```
+## Run
 
 Run the Streamlit app:
 
@@ -131,47 +140,64 @@ Run the Streamlit app:
 streamlit run app.py
 ```
 
+Run the sample CLI pipeline:
+
+```powershell
+python main.py
+```
+
+`main.py` currently runs the pipeline with a built-in sample topic:
+
+```python
+"The impact of artificial intelligence on the job market"
+```
+
 ## Example Usage
+
+Use the pipeline directly from Python:
 
 ```python
 from src.pipelines.pipeline import run_research_pipeline
 
-result = run_research_pipeline("The impact of artificial intelligence on the job market")
-print(result)
+state = run_research_pipeline("The impact of quantum computing on cryptography")
+
+print(state["report"])
+print(state["critique"])
 ```
+
+The returned `state` dictionary contains:
+
+- `search_results`
+- `scraped_content`
+- `report`
+- `critique`
 
 ## How It Works
 
-The system starts with a user topic and performs a structured multi-step research workflow:
+1. The user provides a research topic.
+2. The Search Agent queries Tavily for relevant sources.
+3. The Reader Agent chooses a source from the search results and scrapes readable content.
+4. The Writer Agent combines search snippets and scraped content into a structured report.
+5. The Critic Agent reviews the draft and returns a score, strengths, areas to improve, and a verdict.
 
-1. Search Agent queries the web for relevant sources.
-2. Reader Agent selects the most relevant URL and extracts readable content.
-3. Writer Agent uses the found research to draft a coherent report.
-4. Critic Agent reviews the report and improves quality.
+## Notes
 
-This creates an AI workflow that looks closer to an actual research team than a single prompt-driven pipeline.
-
-## Current Challenges
-
-Some websites enforce anti-bot protection and may reject automated requests with `403 Forbidden`. This is a common issue in research automation and is handled gracefully in the scraper layer with controlled error responses.
+Some websites block automated scraping and may return `403 Forbidden`. The scraper handles these cases with controlled error messages so the pipeline can fail gracefully instead of crashing.
 
 ## Future Improvements
 
-- Add caching for repeated search queries
-- Support multiple source URLs per report
-- Improve source-ranking logic
-- Add PDF export
+- Search and summarize multiple source URLs per report
+- Add source ranking and deduplication
 - Add structured citations and references
-- Enhance UI with charts, summaries, and source cards
+- Cache repeated search and scrape results
+- Add PDF or Markdown export from the Streamlit UI
+- Improve error handling and retry behavior
+- Add tests for tools and pipeline orchestration
 
 ## License
 
-This project is for educational and portfolio demonstration purposes.
-
-## Contact
-
-If you'd like to collaborate or discuss this project, feel free to connect.
+This project is licensed under the terms in [LICENSE](LICENSE).
 
 ---
 
-Built to demonstrate a practical, production-style AI research workflow using LangChain and modern Python tooling.
+Built as a practical portfolio project for multi-agent research automation with LangChain and modern Python tooling.
